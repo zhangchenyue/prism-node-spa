@@ -1,16 +1,26 @@
 var express = require('express');
-var router = express.Router();
-router.settings = {};
+var ensure = require("connect-ensure-login");
+var passport = require('passport');
+var path = require('path');
 
-router.get('/api/version', function (req, res) {
-    res.json({
-        'version': '1.0.0.0',
-        'settings': router.settings
+module.exports = function (app, config) {
+    app.get("/auth/sauth", passport.authenticate("sauth"));
+
+    app.post("/auth/sauth/callback", passport.authenticate("sauth", { successRedirect: "/", failureRedirect: "/auth/sauth", }));
+
+    app.get('/api/version', ensure.ensureLoggedIn("/auth/sauth"), function (req, res) {
+        res.json({
+            'version': '1.0.0.0'
+        });
     });
-});
 
-router.get('/', function (req, res) {
-    res.sendFile(path.join(__dirname, '/index.html'));
-});
+    app.get('/api/appSettings', ensure.ensureLoggedIn("/auth/sauth"), function (req, res) {
+        res.json({
+            'settings': config
+        });
+    });
 
-module.exports = router;
+    app.get('/', ensure.ensureLoggedIn("/auth/sauth"), function (req, res) {
+        res.sendFile(path.join(__dirname, '/test.html'));
+    });
+};
