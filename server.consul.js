@@ -15,7 +15,10 @@ var keys = [
     'Uri-Slb.Prism.Rhapsody.Service.Targets-2',
     'Uri-Slb.Prism.RO.Service.TimeDataStream-1',
     'Uri-Slb.Prism.Rhapsody.Service.RhapsodyApi-1',
-    'Uri-Slb.Prism.Rhapsody.Service.Command-1'
+    'Uri-Slb.Prism.Rhapsody.Service.Command-1',
+    'KeyVault-Uri',
+    'KeyVault-ClientId',
+    'KeyVault-ClientSecret'
 ];
 var urls = keys.map((key) => {
     return consulHost + consulPath + environment + '/' + key;

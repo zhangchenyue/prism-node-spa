@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "azure-keyvault": "^2.0.1-preview",
     "body-parser": "^1.15.2",
     "compression": "^1.6.2",
     "connect-ensure-login": "^0.1.1",
