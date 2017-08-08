@@ -11,8 +11,8 @@ function SAuthStrategy(options, verify) {
     this._authRequests = options.authRequests;
     this._verify = verify;
     this._passReqToCallback = options.passReqToCallback;
-    this._sauthURL = options._sauthURL || 'https://sauth-dot-cfsauth-qa.appspot.com/v0/auth';
-    this._tokenServiceApiKey = options.tokenServiceApiKeyy || 'AIzaSyAR9jypT78fsXfO-wZ4sGfiwlonIADNKUA';
+    this._sauthURL = options.sauthURL || 'https://sauth-dot-cfsauth-qa.appspot.com/v0/auth';
+    this._tokenServiceApiKey = options.tokenServiceApiKey || 'AIzaSyAR9jypT78fsXfO-wZ4sGfiwlonIADNKUA';
     this._tokenServiceURL = options.tokenServiceURL || 'https://tksvc-dot-cfsauth-qa.appspot.com/v0/code';
 }
 

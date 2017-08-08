@@ -39,15 +39,6 @@ var startup = (configuration) => {
     server.use(express.static(path.join(__dirname)));
     route(server, configuration);
 
-    server.use(function (req, res, next) {
-        if (req.isAuthenticated()) {
-            next();
-        } else {
-            res.redirect('/auth/sauth');
-        }
-    });
-
-
     /// catch 404 and forward to error handlersad
     server.use(function (req, res, next) {
         var err = new Error('Not Found');
