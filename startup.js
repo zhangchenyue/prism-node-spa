@@ -11,10 +11,10 @@ var compression = require('compression');
 var passport = require('passport');
 var cookieParser = require('cookie-parser');
 var sts = require('strict-transport-security');
-var route = require('./server.route');
-var sauthPassport = require('./sauth.passport');
+var route = require('./server/route');
+var sauthPassport = require('./server/sauth.passport');
 var appsettings = require('./appsettings.json');
-var consul = require('./server.consul')(appsettings);
+var consul = require('./server/consul')(appsettings);
 
 var server = express();
 var env = process.env.NODE_ENV || 'development';
@@ -65,7 +65,7 @@ consul.get(appsettings['Consul-Keys']).then((config) => {
     var clientId = config.find(item => item.key === 'KeyVault-ClientId').value;
     var clientSecret = config.find(item => item.key === 'KeyVault-ClientSecret').value;
     var vaultUri = config.find(item => item.key === 'KeyVault-Uri').value;
-    var keyvault = require('./server.keyvault')(clientId, clientSecret, vaultUri);
+    var keyvault = require('./server/keyvault')(clientId, clientSecret, vaultUri);
     var keyvaultKeys = appsettings['Keyvault-Keys'].map(key => appsettings.Environment + '-' + key);
     keyvault.getSecrets(keyvaultKeys).then(result => {
         var mergedConfig = config.concat(keyvaultKeys.map((key, idx) => {

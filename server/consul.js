@@ -1,4 +1,4 @@
-const request = require('./server.request');
+const request = require('./request');
 
 module.exports = function (options) {
     var consulHost = options.ConsulUri || 'https://13.91.47.250/';
