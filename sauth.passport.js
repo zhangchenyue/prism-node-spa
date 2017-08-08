@@ -1,7 +1,7 @@
 var SAuthStrategy = require('./sauth.strategy');
 var Users = require('./sauth.users');
 
-module.exports = function (passport, config) {
+module.exports = function (server, passport, config) {
     // used to serialize the user for the session
     passport.serializeUser(function (user, done) {
         Users.setUser(user);
@@ -51,4 +51,9 @@ module.exports = function (passport, config) {
             done(error, null);
         }
     }));
+
+    server.get('/auth/sauth', passport.authenticate('sauth'));
+
+    server.post('/auth/sauth/callback', passport.authenticate('sauth', { successRedirect: '/', failureRedirect: '/auth/sauth', }));
+
 };
