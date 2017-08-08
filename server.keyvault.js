@@ -21,16 +21,7 @@ module.exports = function (clientId, clientSecret, vaultBaseUri) {
             return client.getSecret(vaultBaseUri + key);
         },
         getSecrets: (keys) => {
-            return Promise.all(keys.map(key => client.getSecret(vaultBaseUri + key)));
+            return Promise.all(keys.map(key => client.getSecret(vaultBaseUri + 'secrets/' + key)));
         }
     }
 }
-
-
-
-
-
-// var b = a('https://prism-cdportal.dir.slb.com', 'E+VsMeRoh27e9ftVkROZOrMv1FQaXldg5NIQRjMUHsM=', 'https://fit-safe-kv-prism.vault.azure.net/');
-// b.getSecret('secrets/rhintrhapsody-SAuth-ServiceToken-ApiKey?api-version=2015-06-01').then(result => {
-//     console.log(result.value);
-// }).catch(e => console.log(e));

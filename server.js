@@ -12,8 +12,9 @@ var passport = require('passport');
 var cookieParser = require('cookie-parser');
 var sts = require('strict-transport-security');
 var route = require('./server.route');
-var consul = require('./server.consul');
 var sauthPassport = require('./sauth.passport');
+var appsettings = require('./appsettings.json');
+var consul = require('./server.consul')(appsettings);
 
 var server = express();
 var env = process.env.NODE_ENV || 'development';
@@ -32,46 +33,54 @@ server.use(cookieParser());
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
 
-consul.then((config) => {
+var startup = (configuration) => {
+    console.log(configuration);
+    sauthPassport(passport, configuration);
+    server.use(express.static(path.join(__dirname)));
+    route(server, configuration);
+
+    server.use(function (req, res, next) {
+        if (req.isAuthenticated()) {
+            next();
+        } else {
+            res.redirect('/auth/sauth');
+        }
+    });
+
+
+    /// catch 404 and forward to error handlersad
+    server.use(function (req, res, next) {
+        var err = new Error('Not Found');
+        err.status = 404;
+        next(err);
+    });
+
+    /// error handlers
+    server.use(function (err, req, res, next) {
+        res.status(err.status || 500);
+        console.log(err.status + err.message + req.url);
+        res.end();
+    });
+
+
+    server.set('port', process.env.PORT || 8080);
+
+    var spa = server.listen(server.get('port'), '0.0.0.0', () =>
+        console.log('server listening on port ' + spa.address().port)
+    );
+}
+
+consul.get(appsettings['Consul-Keys']).then((config) => {
     var clientId = config.find(item => item.key === 'KeyVault-ClientId').value;
     var clientSecret = config.find(item => item.key === 'KeyVault-ClientSecret').value;
     var vaultUri = config.find(item => item.key === 'KeyVault-Uri').value;
     var keyvault = require('./server.keyvault')(clientId, clientSecret, vaultUri);
-
-    keyvault.getSecrets(['secrets/rhintrhapsody-SAuth-ServiceToken-ApiKey?api-version=2015-06-01']).then(result => {
-        console.log(result[0].value);
-        sauthPassport(passport, config);
-        server.use(express.static(path.join(__dirname)));
-        route(server, config);
-
-        server.use(function (req, res, next) {
-            if (req.isAuthenticated()) {
-                next();
-            } else {
-                res.redirect('/auth/sauth');
-            }
-        });
-
-
-        /// catch 404 and forward to error handlersad
-        server.use(function (req, res, next) {
-            var err = new Error('Not Found');
-            err.status = 404;
-            next(err);
-        });
-
-        /// error handlers
-        server.use(function (err, req, res, next) {
-            res.status(err.status || 500);
-            console.log(err.status + err.message + +req.url);
-            res.end();
-        });
-
-
-        server.set('port', process.env.PORT || 8080);
-
-        var spa = server.listen(server.get('port'), '0.0.0.0', function () {
-            console.log('server listening on port ' + spa.address().port);
-        });
+    var keyvaultKeys = appsettings['Keyvault-Keys'].map(key => appsettings.Environment + '-' + key);
+    keyvault.getSecrets(keyvaultKeys).then(result => {
+        var mergedConfig = config.concat(keyvaultKeys.map((key, idx) => {
+            return { 'key': key, 'value': result[idx].value };
+        }));
+        startup(mergedConfig);
     }).catch(e => console.log(e));
 }).catch(e => console.log(e));
+
