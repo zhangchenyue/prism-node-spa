@@ -19,24 +19,16 @@ module.exports = function (server, passport, config) {
     });
 
     var authOptions = {
-        // authRequests: {
-        //     'localhost:8080': {
-        //         authRequest: {
-        //             'clientid': 'testproj.slbapp.com',
-        //             'rcbid': 'node-lh8080',
-        //         },
-        //         authRequestEncoded: 'ODA3NjE1OTF7ImNsaWVudGlkIjoidGVzdHByb2ouc2xiYXBwLmNvbSIsICJyY2JpZCI6Im5vZGUtbGg4MDgwIiB9NzM1NDEzMTI=',
-        //     },
-        // },
-        authRequests: {
-            'localhost:5000': {
-                authRequest: {
-                    'clientid': 'rhapsody-localhost5000-interpretationdrillopstown.slbapp.com',
-                    'rcbid': 'rhapsody-localhost5000',
-                },
-                authRequestEncoded: 'ODE4OTI3NjR7ImNsaWVudGlkIjoicmhhcHNvZHktbG9jYWxob3N0NTAwMC1pbnRlcnByZXRhdGlvbmRyaWxsb3BzdG93bi5zbGJhcHAuY29tIiwgInJjYmlkIjoicmhhcHNvZHktbG9jYWxob3N0NTAwMCJ9NjY2NDI2MTI=',
+        sauthURL: '',
+        tokenServiceApiKey: '',
+        tokenServiceURL: '',
+        authRequest: {
+            info: {
+                'clientid': 'rhapsody-localhost5000-interpretationdrillopstown.slbapp.com',
+                'rcbid': 'rhapsody-localhost5000',
             },
-        },
+            encodedString: 'ODE4OTI3NjR7ImNsaWVudGlkIjoicmhhcHNvZHktbG9jYWxob3N0NTAwMC1pbnRlcnByZXRhdGlvbmRyaWxsb3BzdG93bi5zbGJhcHAuY29tIiwgInJjYmlkIjoicmhhcHNvZHktbG9jYWxob3N0NTAwMCJ9NjY2NDI2MTI=',
+        }
     };
 
     passport.use(new SAuthStrategy(authOptions, function (token, refreshToken, profile, done) {

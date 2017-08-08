@@ -4,11 +4,11 @@ var request = require('request');
 var querystring = require('querystring');
 
 function SAuthStrategy(options, verify) {
-    if (!options.authRequests) { throw new TypeError('SAuthStrategy requires a authRequests option'); }
+    if (!options.authRequest) { throw new TypeError('SAuthStrategy requires a authRequest option'); }
     passport.Strategy.call(this);
 
     this.name = 'sauth';
-    this._authRequests = options.authRequests;
+    this._authRequest = options.authRequest;
     this._verify = verify;
     this._passReqToCallback = options.passReqToCallback;
     this._sauthURL = options.sauthURL || 'https://sauth-dot-cfsauth-qa.appspot.com/v0/auth';
@@ -21,9 +21,9 @@ util.inherits(SAuthStrategy, passport.Strategy);
 SAuthStrategy.prototype.authenticate = function (req, options) {
     var self = this;
 
-    var authRequestInfo = this._authRequests[req.get('host')];
+    var authRequest = this._authRequest;
 
-    if (!authRequestInfo) {
+    if (!authRequest) {
         this.fail({ message: 'host not registered:' + req.get('host') });
     }
     else if (req.method !== 'POST') {
@@ -31,7 +31,7 @@ SAuthStrategy.prototype.authenticate = function (req, options) {
         var redirectParams = {
             code: '',
             nonce: nonce,
-            authRequest: authRequestInfo.authRequestEncoded,
+            authRequest: authRequest.encodedString,
         };
         req.session.nonce = nonce;
         this.redirect(this._sauthURL + '?' + querystring.stringify(redirectParams));
@@ -65,7 +65,7 @@ SAuthStrategy.prototype.authenticate = function (req, options) {
                         'Referer': referer,
                     },
                     body: {
-                        clientid: authRequestInfo.authRequest.clientid,
+                        clientid: authRequest.info.clientid,
                         code: code,
                     },
                     json: true,
