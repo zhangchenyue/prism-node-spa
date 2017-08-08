@@ -19,24 +19,24 @@ module.exports = function (server, passport, config) {
     });
 
     var authOptions = {
-        authRequests: {
-            'localhost:8080': {
-                authRequest: {
-                    'clientid': 'testproj.slbapp.com',
-                    'rcbid': 'node-lh8080',
-                },
-                authRequestEncoded: 'ODA3NjE1OTF7ImNsaWVudGlkIjoidGVzdHByb2ouc2xiYXBwLmNvbSIsICJyY2JpZCI6Im5vZGUtbGg4MDgwIiB9NzM1NDEzMTI=',
-            },
-        },
         // authRequests: {
-        //     'localhost:5000': {
+        //     'localhost:8080': {
         //         authRequest: {
-        //             'clientid': 'rhapsody-local-interpretationdrillopstown.slbapp.com',
-        //             'rcbid': 'rhapsody-local',
+        //             'clientid': 'testproj.slbapp.com',
+        //             'rcbid': 'node-lh8080',
         //         },
-        //         authRequestEncoded: 'NTYwNTQxMTB7ImNsaWVudGlkIjoicmhhcHNvZHktbG9jYWwtaW50ZXJwcmV0YXRpb25kcmlsbG9wc3Rvd24uc2xiYXBwLmNvbSIsICJyY2JpZCI6InJoYXBzb2R5LWxvY2FsIiB9NDI5OTU4NTQ=',
+        //         authRequestEncoded: 'ODA3NjE1OTF7ImNsaWVudGlkIjoidGVzdHByb2ouc2xiYXBwLmNvbSIsICJyY2JpZCI6Im5vZGUtbGg4MDgwIiB9NzM1NDEzMTI=',
         //     },
         // },
+        authRequests: {
+            'localhost:5000': {
+                authRequest: {
+                    'clientid': 'rhapsody-localhost5000-interpretationdrillopstown.slbapp.com',
+                    'rcbid': 'rhapsody-localhost5000',
+                },
+                authRequestEncoded: 'ODE4OTI3NjR7ImNsaWVudGlkIjoicmhhcHNvZHktbG9jYWxob3N0NTAwMC1pbnRlcnByZXRhdGlvbmRyaWxsb3BzdG93bi5zbGJhcHAuY29tIiwgInJjYmlkIjoicmhhcHNvZHktbG9jYWxob3N0NTAwMCJ9NjY2NDI2MTI=',
+            },
+        },
     };
 
     passport.use(new SAuthStrategy(authOptions, function (token, refreshToken, profile, done) {
@@ -52,8 +52,8 @@ module.exports = function (server, passport, config) {
         }
     }));
 
-    server.get('/auth/sauth', passport.authenticate('sauth'));
+    server.get('/signon', passport.authenticate('sauth'));
 
-    server.post('/auth/sauth/callback', passport.authenticate('sauth', { successRedirect: '/', failureRedirect: '/auth/sauth', }));
+    server.post('/signonCallback', passport.authenticate('sauth', { successRedirect: '/', failureRedirect: '/signon', }));
 
 };

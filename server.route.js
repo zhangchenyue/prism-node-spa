@@ -4,7 +4,7 @@ var passport = require('passport');
 var path = require('path');
 
 module.exports = function (app, config) {
-    app.all('*', ensure.ensureLoggedIn('/auth/sauth'));
+    app.all('*', ensure.ensureLoggedIn('/signon'));
     
     app.get('/api/version', function (req, res) {
         res.json({

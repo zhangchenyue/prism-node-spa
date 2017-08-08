@@ -54,7 +54,7 @@ var startup = (configuration) => {
     });
 
 
-    server.set('port', process.env.PORT || 8080);
+    server.set('port', process.env.PORT || 5000);
 
     var spa = server.listen(server.get('port'), '0.0.0.0', () =>
         console.log('server listening on port ' + spa.address().port)
