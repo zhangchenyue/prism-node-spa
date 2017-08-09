@@ -6,6 +6,7 @@ var stsbearer = require('./sts.bearer');
 module.exports = function (app, config) {
     app.all('/api/*', ensure.ensureLoggedIn('/signon'));
 
+    //api route
     app.get('/api/user', function (req, res) {
         res.json({
             'nameIdentifier': '',
@@ -17,14 +18,7 @@ module.exports = function (app, config) {
     });
 
     app.get('/api/appSettings', function (req, res) {
-        var decoded = Buffer.from(req.user.utoken.split('.')[1], 'base64').toString();
-        console.log(config['SAuth-ServiceToken-ApiKey']);
         var sToken = svctoken(config['SAuth-ServiceToken-Uri'], config['SAuth-ServiceToken-ApiKey']);
-        var param = {
-            uJwttoken: req.user.utoken,
-            targetProjectId: '',
-            targetServiceId: ''
-        }
         Promise.all([stsbearer.get(config['STS-Endpoint'], req.user.id), sToken.get({ uJwttoken: req.user.utoken, targetProjectId: '', targetServiceId: '' })])
             .then(arrRes => {
                 res.json({
@@ -49,6 +43,7 @@ module.exports = function (app, config) {
             .catch(e => console.log(e));
     });
 
+    //page route
     [
         '/',
         '/performance',
