@@ -11,6 +11,8 @@ module.exports = function (app, config) {
     });
 
     app.get('/api/appSettings', function (req, res) {
+        var decoded = Buffer.from(req.user.utoken.split('.')[1], 'base64').toString();
+        console.log(decoded);
         res.json({
             'settings': config,
             'user': req.user

@@ -32,11 +32,11 @@ module.exports = function (server, passport, config) {
         }
     };
 
-    passport.use(new SAuthStrategy(authOptions, function (token, refreshToken, profile, done) {
+    passport.use(new SAuthStrategy(authOptions, function (accessToken, refreshToken, profile, done) {
         try {
             let user = {
                 id: profile.user,
-                utoken: token,
+                utoken: profile.stoken,
                 refreshToken: refreshToken,
                 givenName: profile.firstName,
                 lastName: profile.lastName,
