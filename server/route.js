@@ -3,7 +3,7 @@ var path = require('path');
 var svctoken = require('./sauth.svctoken');
 var stsbearer = require('./sts.bearer');
 var serviceTokenCache = ''
-var expiredseconds = 23// * 3600;
+var expiredseconds = 23 * 3600;
 
 module.exports = function (app, config) {
     app.all('/api/*', ensure.ensureLoggedIn('/signon'));
