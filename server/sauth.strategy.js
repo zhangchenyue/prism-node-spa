@@ -69,6 +69,7 @@ SAuthStrategy.prototype.authenticate = function (req, options) {
                         code: code,
                     },
                     json: true,
+                    strictSSL: false
                 };
                 request.post(params, function (err, response, profile) {
                     if (err) { return self.error(err); }
@@ -93,6 +94,29 @@ SAuthStrategy.prototype.authenticate = function (req, options) {
                         return self.error(ex);
                     }
                 });
+                // request.post(params.url, params.body).then((err, response, profile) => {
+                //     if (err) { return self.error(err); }
+
+                //     function verified(err, user, info) {
+                //         if (err) { return self.error(err); }
+                //         if (!user) { return self.fail(info); }
+
+                //         info = info || {};
+                //         self.success(user, info);
+                //     }
+                //     try {
+                //         if (!profile.user) {
+                //             throw Error('Missing user value');
+                //         }
+                //         if (self._passReqToCallback) {
+                //             self._verify(req, profile.accesstoken, profile.refreshtoken, profile, verified);
+                //         } else {
+                //             self._verify(profile.accesstoken, profile.refreshtoken, profile, verified);
+                //         }
+                //     } catch (ex) {
+                //         return self.error(ex);
+                //     }
+                // });
             }
             catch (ex) {
                 return self.error(ex);

@@ -1,4 +1,4 @@
-const request = require('./request');
+const request = require('./request-promise');
 
 module.exports = function (options) {
     var consulHost = options.ConsulUri || 'https://13.91.47.250/';
@@ -11,7 +11,7 @@ module.exports = function (options) {
                 request.batchGet(urls)
                     .then((res) => {
                         var config = res.map(function (el) {
-                            var arrRes = JSON.parse(el);
+                            var arrRes = el;
                             var val = arrRes[0].Value;
                             return {
                                 'key': arrRes[0].Key.replace(environment + '/', ''),
@@ -24,7 +24,6 @@ module.exports = function (options) {
                         reject(e);
                     });
             });
-
         }
     }
 }
