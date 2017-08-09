@@ -1,6 +1,7 @@
 var ensure = require('connect-ensure-login');
 var path = require('path');
 var svctoken = require('./sauth.svctoken');
+var stsbearer = require('./sts.bearer');
 
 module.exports = function (app, config) {
     app.all('/api/*', ensure.ensureLoggedIn('/signon'));
@@ -24,26 +25,28 @@ module.exports = function (app, config) {
             targetProjectId: '',
             targetServiceId: ''
         }
-        sToken.get(param).then((data) => {
-            res.json({
-                'baseUrl':null,
-                'debugWellID':'',
-                'drillingActivityReaderURI':config['Uri-Slb.Prism.Rhapsody.Service.DrillingActivityReader-1'],
-                'drillingApiDepthDataURI':config['Uri-Slb.Prism.RO.Service.DrillingApi.DepthData-1'],
-                'drillingApiTimeDataURI':config['Uri-Slb.Prism.RO.Service.DrillingApi.TimeData-1'],
-                'drillingStreamTimeDataURI':config['Uri-Slb.Prism.RO.Service.TimeDataStream-1'],
-                'fedSts':config['STS-Endpoint'],
-                'footageProjectionURI':config['Uri-Slb.Prism.Rhapsody.Service.FootageProjection-1'],
-                'jwtToken':req.user.utoken,
-                'kpiDataURI':config['Uri-Slb.Prism.Rhapsody.Service.KpiPublisher-1'],
-                'kpiReaderURI':config['Uri-Slb.Prism.Rhapsody.Service.KpiReader-2'],
-                'rhapsodyApiURI':config['Uri-Slb.Prism.Rhapsody.Service.RhapsodyApi-1'],
-                'rhapsodycommandURI':config['Uri-Slb.Prism.Rhapsody.Service.Command-1'],
-                'serviceToken':data.svctoken,
-                'targetsURI':config['Uri-Slb.Prism.Rhapsody.Service.Targets-2'],
-                'wellURI':config['Well-URI']
-            });
-        }).catch(e => console.log(e));
+        Promise.all([stsbearer.get(config['STS-Endpoint'], req.user.id), sToken.get({ uJwttoken: req.user.utoken, targetProjectId: '', targetServiceId: '' })])
+            .then(arrRes => {
+                res.json({
+                    'baseUrl': null,
+                    'debugWellID': '',
+                    'drillingActivityReaderURI': config['Uri-Slb.Prism.Rhapsody.Service.DrillingActivityReader-1'],
+                    'drillingApiDepthDataURI': config['Uri-Slb.Prism.RO.Service.DrillingApi.DepthData-1'],
+                    'drillingApiTimeDataURI': config['Uri-Slb.Prism.RO.Service.DrillingApi.TimeData-1'],
+                    'drillingStreamTimeDataURI': config['Uri-Slb.Prism.RO.Service.TimeDataStream-1'],
+                    'fedSts': config['STS-Endpoint'],
+                    'footageProjectionURI': config['Uri-Slb.Prism.Rhapsody.Service.FootageProjection-1'],
+                    'jwtToken': arrRes[0].access_token,
+                    'kpiDataURI': config['Uri-Slb.Prism.Rhapsody.Service.KpiPublisher-1'],
+                    'kpiReaderURI': config['Uri-Slb.Prism.Rhapsody.Service.KpiReader-2'],
+                    'rhapsodyApiURI': config['Uri-Slb.Prism.Rhapsody.Service.RhapsodyApi-1'],
+                    'rhapsodycommandURI': config['Uri-Slb.Prism.Rhapsody.Service.Command-1'],
+                    'serviceToken': arrRes[1].svctoken,
+                    'targetsURI': config['Uri-Slb.Prism.Rhapsody.Service.Targets-2'],
+                    'wellURI': config['Well-URI']
+                });
+            })
+            .catch(e => console.log(e));
     });
 
     [
