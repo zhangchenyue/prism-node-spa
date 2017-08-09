@@ -22,9 +22,22 @@ module.exports = function (app, config) {
         }
         sToken.get(param).then((data) => {
             res.json({
-                'settings': config,
-                'user': req.user,
-                'svctoken': data.svctoken
+                'baseUrl':null,
+                'debugWellID':'',
+                'drillingActivityReaderURI':config['Uri-Slb.Prism.Rhapsody.Service.DrillingActivityReader-1'],
+                'drillingApiDepthDataURI':config['Uri-Slb.Prism.RO.Service.DrillingApi.DepthData-1'],
+                'drillingApiTimeDataURI':config['Uri-Slb.Prism.RO.Service.DrillingApi.TimeData-1'],
+                'drillingStreamTimeDataURI':config['Uri-Slb.Prism.RO.Service.TimeDataStream-1'],
+                'fedSts':config['STS-Endpoint'],
+                'footageProjectionURI':config['Uri-Slb.Prism.Rhapsody.Service.FootageProjection-1'],
+                'jwtToken':req.user.utoken,
+                'kpiDataURI':config['Uri-Slb.Prism.Rhapsody.Service.KpiPublisher-1'],
+                'kpiReaderURI':config['Uri-Slb.Prism.Rhapsody.Service.KpiReader-2'],
+                'rhapsodyApiURI':config['Uri-Slb.Prism.Rhapsody.Service.RhapsodyApi-1'],
+                'rhapsodycommandURI':config['Uri-Slb.Prism.Rhapsody.Service.Command-1'],
+                'serviceToken':data.svctoken,
+                'targetsURI':config['Uri-Slb.Prism.Rhapsody.Service.Targets-2'],
+                'wellURI':config['Well-URI']
             });
         }).catch(e => console.log(e));
     });
