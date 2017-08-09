@@ -2,6 +2,8 @@ var ensure = require('connect-ensure-login');
 var path = require('path');
 var svctoken = require('./sauth.svctoken');
 var stsbearer = require('./sts.bearer');
+var serviceTokenCache = ''
+var expiredseconds = 23// * 3600;
 
 module.exports = function (app, config) {
     app.all('/api/*', ensure.ensureLoggedIn('/signon'));
@@ -18,9 +20,16 @@ module.exports = function (app, config) {
     });
 
     app.get('/api/appSettings', function (req, res) {
-        var sToken = svctoken(config['SAuth-ServiceToken-Uri'], config['SAuth-ServiceToken-ApiKey']);
-        Promise.all([stsbearer.fetch(config['STS-Endpoint'], req.user.id), sToken.fetch({ uJwttoken: req.user.utoken, targetProjectId: '', targetServiceId: '' })])
+        var delt = (Date.now() - req.user.date) / 1000;
+        var reqlist = [stsbearer.fetch(config['STS-Endpoint'], req.user.id)]
+        if (!serviceTokenCache || delt >= expiredseconds) {
+            var sToken = svctoken(config['SAuth-ServiceToken-Uri'], config['SAuth-ServiceToken-ApiKey']);
+            reqlist.push(sToken.fetch({ uJwttoken: req.user.utoken, targetProjectId: '', targetServiceId: '' }))
+        }
+
+        Promise.all(reqlist)
             .then(arrRes => {
+                serviceTokenCache = arrRes[1] ? arrRes[1].svctoken : serviceTokenCache;
                 res.json({
                     'baseUrl': null,
                     'debugWellID': '',
@@ -35,7 +44,7 @@ module.exports = function (app, config) {
                     'kpiReaderURI': config['Uri-Slb.Prism.Rhapsody.Service.KpiReader-2'],
                     'rhapsodyApiURI': config['Uri-Slb.Prism.Rhapsody.Service.RhapsodyApi-1'],
                     'rhapsodycommandURI': config['Uri-Slb.Prism.Rhapsody.Service.Command-1'],
-                    'serviceToken': arrRes[1].svctoken,
+                    'serviceToken': serviceTokenCache,
                     'targetsURI': config['Uri-Slb.Prism.Rhapsody.Service.Targets-2'],
                     'wellURI': config['Well-URI']
                 });

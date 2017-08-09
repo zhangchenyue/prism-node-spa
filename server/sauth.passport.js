@@ -40,6 +40,7 @@ module.exports = function (server, passport, config) {
                 refreshToken: refreshToken,
                 givenName: profile.firstName,
                 lastName: profile.lastName,
+                date: Date.now()
             };
             done(null, user);
         } catch (error) {
