@@ -31,7 +31,6 @@ server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
 
 var startup = (configuration) => {
-    console.log(configuration);
     sauthPassport(server, passport, configuration);
     route(server, configuration);
     server.use(express.static(path.join(__dirname,'dist')));

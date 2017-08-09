@@ -19,7 +19,7 @@ module.exports = function (app, config) {
 
     app.get('/api/appSettings', function (req, res) {
         var sToken = svctoken(config['SAuth-ServiceToken-Uri'], config['SAuth-ServiceToken-ApiKey']);
-        Promise.all([stsbearer.get(config['STS-Endpoint'], req.user.id), sToken.get({ uJwttoken: req.user.utoken, targetProjectId: '', targetServiceId: '' })])
+        Promise.all([stsbearer.fetch(config['STS-Endpoint'], req.user.id), sToken.fetch({ uJwttoken: req.user.utoken, targetProjectId: '', targetServiceId: '' })])
             .then(arrRes => {
                 res.json({
                     'baseUrl': null,

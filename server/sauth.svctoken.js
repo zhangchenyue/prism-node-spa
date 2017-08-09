@@ -2,7 +2,7 @@ var request = require('./request-promise');
 
 module.exports = function (tokenUri, apiKey, projectId, serviceId, secret) {
     return {
-        'get': (option) => {
+        'fetch': (option) => {
             option = option || {};
             var url = tokenUri + '?key=' + apiKey;
             var uJwttoken = option.uJwttoken || '';
@@ -14,7 +14,7 @@ module.exports = function (tokenUri, apiKey, projectId, serviceId, secret) {
                 'targetserviceid': option.targetServiceId || ''
             }
             if (uJwttoken) {
-                requestModel['onbehalf'] = "user";
+                requestModel['onbehalf'] = 'user';
                 requestModel['stoken'] = uJwttoken;
                 requestModel['auds'] = JSON.parse(Buffer.from(uJwttoken.split('.')[1], 'base64').toString()).aud;
             }

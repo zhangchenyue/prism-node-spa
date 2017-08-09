@@ -1,19 +1,11 @@
 var request = require('request');
 
 module.exports = {
-    'get': (url, upn) => {
-        url += 'Token'
-        console.log(url);
-        var requestModel = {
-            'grant_type': 'password',
-            'NameIdentifier': upn,
-            'unique_name': upn
-        }
-
+    'fetch': (url, upn) => {
         var param = {
-            'url': url,
+            'url': url + 'Token',
             'headers': {},
-            'form': requestModel || {},
+            'form': { 'grant_type': 'password', 'NameIdentifier': upn, 'unique_name': upn } || {},
             strictSSL: false
         };
 
