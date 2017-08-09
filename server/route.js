@@ -1,5 +1,4 @@
 var ensure = require('connect-ensure-login');
-var passport = require('passport');
 var path = require('path');
 
 module.exports = function (app, config) {
