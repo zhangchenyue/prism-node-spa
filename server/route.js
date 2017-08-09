@@ -5,7 +5,7 @@ var path = require('path');
 
 module.exports = function (app, config) {
     app.all('*', ensure.ensureLoggedIn('/signon'));
-    
+
     app.get('/api/version', function (req, res) {
         res.json({
             'version': '1.0.0.0'
@@ -14,7 +14,8 @@ module.exports = function (app, config) {
 
     app.get('/api/appSettings', function (req, res) {
         res.json({
-            'settings': config
+            'settings': config,
+            'user': req.user
         });
     });
 

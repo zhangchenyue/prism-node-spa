@@ -5,7 +5,7 @@ module.exports = function (server, passport, config) {
     // used to serialize the user for the session
     passport.serializeUser(function (user, done) {
         Users.setUser(user);
-        done(null, user.Email);
+        done(null, user.id);
     });
 
     // used to deserialize the user
@@ -32,9 +32,11 @@ module.exports = function (server, passport, config) {
     passport.use(new SAuthStrategy(authOptions, function (token, refreshToken, profile, done) {
         try {
             let user = {
-                Email: profile.user,
-                GivenName: profile.firstName,
-                LastName: profile.lastName,
+                id: profile.user,
+                utoken: token,
+                refreshToken: refreshToken,
+                givenName: profile.firstName,
+                lastName: profile.lastName,
             };
             done(null, user);
         } catch (error) {

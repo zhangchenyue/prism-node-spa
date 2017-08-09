@@ -2,9 +2,9 @@ var users = {};
 
 class Users {
 
-    static getUser(email) {
+    static getUser(id) {
         try {
-            return users[email];
+            return users[id];
         }
         catch (err) {
             console.log(err);
@@ -13,7 +13,7 @@ class Users {
     }
 
     static setUser(user) {
-        users[user.Email] = user;
+        users[user.id] = user;
     }
 }
 
