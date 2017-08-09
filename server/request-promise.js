@@ -5,7 +5,7 @@ function requestPromise(url, method, data) {
         var params = {
             'url': url,
             'headers': {},
-            'body': {},
+            'body': data || {},
             json: true,
             strictSSL: false
         };
@@ -13,7 +13,11 @@ function requestPromise(url, method, data) {
             if (err) {
                 reject(err)
             };
-            resolve(data[0]);
+            if (data.Error) {
+                reject(data.Error)
+            } else {
+                resolve(data[0]);
+            }
         });
     });
 };
