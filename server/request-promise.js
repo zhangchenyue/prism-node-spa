@@ -16,7 +16,7 @@ function requestPromise(url, method, data) {
             if (data.Error) {
                 reject(data.Error)
             } else {
-                resolve(data[0]);
+                resolve(data);
             }
         });
     });

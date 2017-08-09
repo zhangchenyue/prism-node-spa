@@ -12,7 +12,7 @@ module.exports = function (options) {
                     .then((res) => {
                         var config = {};
                         res.forEach((el) => {
-                            config[el.Key.replace(environment + '/', '')] = Buffer.from(el.Value, 'base64').toString();
+                            config[el[0].Key.replace(environment + '/', '')] = Buffer.from(el[0].Value, 'base64').toString();
                         });
                         resolve(config);
                     })
