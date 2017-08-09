@@ -5,9 +5,13 @@ var svctoken = require('./sauth.svctoken');
 module.exports = function (app, config) {
     app.all('/api/*', ensure.ensureLoggedIn('/signon'));
 
-    app.get('/api/version', function (req, res) {
+    app.get('/api/user', function (req, res) {
         res.json({
-            'version': '1.0.0.0'
+            'nameIdentifier': '',
+            'name': req.user.id,
+            'roles': '',
+            'upn': req.user.id,
+            'utoken': req.user.utoken,
         });
     });
 
