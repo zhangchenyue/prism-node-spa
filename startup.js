@@ -26,8 +26,6 @@ server.use(favicon(__dirname + '/favicon.ico'));
 server.use(logger('dev'));
 server.use(require('express-session')({ secret: 'slb dls', resave: false, saveUninitialized: false, }));
 server.use(sts.getSTS({ 'max-age': { days: 30 } }));
-server.use(passport.initialize());
-server.use(passport.session());
 server.use(cookieParser());
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
@@ -35,8 +33,8 @@ server.use(bodyParser.urlencoded({ extended: true }));
 var startup = (configuration) => {
     console.log(configuration);
     sauthPassport(server, passport, configuration);
-    server.use(express.static(path.join(__dirname)));
     route(server, configuration);
+    server.use(express.static(path.join(__dirname,'dist')));
 
     /// catch 404 and forward to error handlersad
     server.use(function (req, res, next) {

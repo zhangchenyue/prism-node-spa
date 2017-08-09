@@ -1,17 +1,20 @@
 var SAuthStrategy = require('./sauth.strategy');
-var Users = require('./sauth.users');
 
 module.exports = function (server, passport, config) {
+    server.use(passport.initialize());
+    server.use(passport.session());
+
+    var users = {};
     // used to serialize the user for the session
     passport.serializeUser(function (user, done) {
-        Users.setUser(user);
+        users[user.id] = user;
         done(null, user.id);
     });
 
     // used to deserialize the user
     passport.deserializeUser(function (id, done) {
         try {
-            let user = Users.getUser(id);
+            let user = users[id] || null;
             done(null, user);
         } catch (error) {
             done(null, null);
