@@ -10,13 +10,9 @@ module.exports = function (options) {
             return new Promise(function (resolve, reject) {
                 request.batchGet(urls)
                     .then((res) => {
-                        var config = res.map(function (el) {
-                            var arrRes = el;
-                            var val = arrRes[0].Value;
-                            return {
-                                'key': arrRes[0].Key.replace(environment + '/', ''),
-                                'value': Buffer.from(val, 'base64').toString()
-                            }
+                        var config = {};
+                        res.forEach((el) => {
+                            config[el.Key.replace(environment + '/', '')] = Buffer.from(el.Value, 'base64').toString();
                         });
                         resolve(config);
                     })

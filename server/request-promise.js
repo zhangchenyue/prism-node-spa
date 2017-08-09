@@ -13,7 +13,7 @@ function requestPromise(url, method, data) {
             if (err) {
                 reject(err)
             };
-            resolve(data);
+            resolve(data[0]);
         });
     });
 };

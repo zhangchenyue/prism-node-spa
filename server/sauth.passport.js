@@ -18,16 +18,14 @@ module.exports = function (server, passport, config) {
         }
     });
 
+    var decodedAuthString = Buffer.from(config['SAuth-ClientAuthRequestEncoded-Rhapsody'], 'base64').toString();
     var authOptions = {
         sauthURL: '',
         tokenServiceApiKey: '',
         tokenServiceURL: '',
         authRequest: {
-            info: {
-                'clientid': 'rhapsody-localhost5000-interpretationdrillopstown.slbapp.com',
-                'rcbid': 'rhapsody-localhost5000',
-            },
-            encodedString: 'ODE4OTI3NjR7ImNsaWVudGlkIjoicmhhcHNvZHktbG9jYWxob3N0NTAwMC1pbnRlcnByZXRhdGlvbmRyaWxsb3BzdG93bi5zbGJhcHAuY29tIiwgInJjYmlkIjoicmhhcHNvZHktbG9jYWxob3N0NTAwMCJ9NjY2NDI2MTI=',
+            info: JSON.parse(decodedAuthString.substring(decodedAuthString.indexOf('{'), 1 + decodedAuthString.lastIndexOf('}'))),
+            encodedString: config['SAuth-ClientAuthRequestEncoded-Rhapsody']
         }
     };
 

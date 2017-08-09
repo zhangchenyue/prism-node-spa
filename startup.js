@@ -18,7 +18,7 @@ var consul = require('./server/consul')(appsettings);
 var server = express();
 var env = process.env.NODE_ENV || 'development';
 server.locals.ENV = env;
-server.locals.ENV_DEVELOPMENT = env == 'development';
+server.DEBUG_MODE = (env == 'development');
 
 //server.use(require('compression')()) // must be first!
 
@@ -60,15 +60,18 @@ var startup = (configuration) => {
     );
 }
 
-consul.get(appsettings['Consul-Keys']).then((config) => {
-    var clientId = config.find(item => item.key === 'KeyVault-ClientId').value;
-    var clientSecret = config.find(item => item.key === 'KeyVault-ClientSecret').value;
-    var vaultUri = config.find(item => item.key === 'KeyVault-Uri').value;
-    var keyvault = require('./server/keyvault')(clientId, clientSecret, vaultUri);
-    var keyvaultKeys = appsettings['Keyvault-Keys'].map(key => appsettings.Environment + '-' + key);
-    keyvault.getSecrets(keyvaultKeys)
-        .then(result => {
-            startup(config.concat(keyvaultKeys.map((key, idx) => { return { 'key': key, 'value': result[idx].value }; })));
-        }).catch(e => console.log(e));
-}).catch(e => console.log(e));
-
+if (server.DEBUG_MODE) {
+    var config = appsettings['Consul'];
+    Object.keys(appsettings['Keyvault']).forEach((key) => config[key] = appsettings['Keyvault'][key]);
+    startup(config);
+} else {
+    consul.get(Object.keys(appsettings['Consul'])).then((config) => {
+        var keyvault = require('./server/keyvault')(config['KeyVault-ClientId'], config['KeyVault-ClientSecret'], config['KeyVault-Uri']);
+        var keyvaultKeys = Object.keys(appsettings['Keyvault']).map(key => appsettings.Environment + '-' + key);
+        keyvault.getSecrets(keyvaultKeys)
+            .then(result => {
+                keyvaultKeys.forEach((key, idx) => config[key] = result[idx].value);
+                startup(config);
+            }).catch(e => console.log(e));
+    }).catch(e => console.log(e));
+}
